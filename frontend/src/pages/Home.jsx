@@ -208,7 +208,7 @@
 
 // export default Home;
 
-//dont get confused b/w these two codes wo upar wala pehle kia th as it was hsowing hardcoded values jabk ye ni a
+//dont get confused b/w these two codes wo upar wala pehle kia th as it was hsowing hardcoded values jabk
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -248,14 +248,17 @@ const Home = () => {
     }
   };
 
-  const handleSearch = () => {
-    navigate("/search", {
-      state: {
-        category: selectedCategory,
-        manufacturers: selectedManufacturers,
-      },
-    });
-  };
+const handleSearch = () => {
+  const selectedCategoryObj = categories.find((cat) => cat._id === selectedCategory);
+  
+  navigate("/search", {
+    state: {
+      category: selectedCategory,
+      categoryName: selectedCategoryObj?.name || "All Categories",
+      manufacturers: selectedManufacturers,
+    },
+  });
+};
 
 
   const currentManufacturers =

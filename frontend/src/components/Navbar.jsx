@@ -1,12 +1,36 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaSearch, FaBars, FaTimes, FaGlobe } from "react-icons/fa";
 import "./Navbar.css";
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate("/search", {
+        state: {
+          category: "",
+          categoryName: "All Categories",
+          manufacturers: [],
+          keywords: searchTerm.trim(),
+        },
+      });
+    }
+  };
+
+  // Handle search on Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(e);
+    }
   };
 
   return (
@@ -39,8 +63,7 @@ function Header() {
         <div className="mobile-menu-item">EN 🇺🇸</div>
         <div className="mobile-menu-item">Global Brands</div>
       </div>
-
-   
+     
       <header className="header">
         <div className="header-content">
           <div className="logo-section">
@@ -53,16 +76,19 @@ function Header() {
               Machinery <span>Trader</span>
             </h1>
           </div>
-          
-          <div className="search-box">
+                   
+          <form className="search-box" onSubmit={handleSearch}>
             <input
               type="text"
               placeholder="Search (ex: Keywords or Quick Find Code)"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyPress={handleKeyPress}
             />
-            <button>
+            <button type="submit">
               <FaSearch />
             </button>
-          </div>
+          </form>
         </div>
       </header>
     </>

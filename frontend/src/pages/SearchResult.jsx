@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 //import "./SearchResults.css";
@@ -6,7 +5,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const SearchResults = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { category, manufacturers } = location.state || {};
+  const { category, categoryName, manufacturers, keywords } = location.state || {};
 
   return (
     <div className="results-container">
@@ -14,18 +13,36 @@ const SearchResults = () => {
         <h1>Search Results</h1>
       </header>
 
-      <div className="results">
-        <h2>Selected Category: {category || "None"}</h2>
-        <h3>Manufacturers:</h3>
-        {manufacturers && manufacturers.length > 0 ? (
-          <ul>
-            {manufacturers.map((m) => (
-              <li key={m}>{m}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No manufacturers selected.</p>
+      <div className="results">  
+        {keywords && (
+          <div className="keyword-search">
+            <h2>Search Results for: "{keywords}"</h2>
+          </div>
         )}
+        
+        {!keywords && (
+          <h2>Selected Category: {categoryName || "All Categories"}</h2>
+        )}
+        
+        {manufacturers && manufacturers.length > 0 && (
+          <>
+            <h3>Manufacturers:</h3>
+            <ul>
+              {manufacturers.map((m, index) => (
+                <li key={index}>{m}</li>
+              ))}
+            </ul>
+          </>
+        )}
+        
+        <div className="search-results-placeholder">
+          <p>Search results will be displayed here...</p>
+          <p>
+            {keywords 
+              ? `Showing results for "${keywords}"` 
+              : `Showing results for ${categoryName || "All Categories"}`}
+          </p>
+        </div>
       </div>
 
       <button onClick={() => navigate("/")} className="back-btn">
