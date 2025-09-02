@@ -208,8 +208,6 @@
 
 // export default Home;
 
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -218,12 +216,13 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedManufacturers, setSelectedManufacturers] = useState([]);
+  const [showManufacturerDropdown, setShowManufacturerDropdown] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:5000/categories"); // backend API
+        const res = await fetch("http://localhost:5000/categories");
         const data = await res.json();
         setCategories(data);
       } catch (error) {
@@ -235,16 +234,16 @@ const Home = () => {
   }, []);
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-    setSelectedManufacturers([]);
+    setSelectedCategory(e.target.value); // ye _id hoga
+    setSelectedManufacturers([]); // reset manufacturers
+    setShowManufacturerDropdown(false);
   };
 
-  const handleManufacturerChange = (e) => {
-    const value = e.target.value;
-    if (selectedManufacturers.includes(value)) {
-      setSelectedManufacturers(selectedManufacturers.filter((m) => m !== value));
+  const handleManufacturerToggle = (manufacturerName) => {
+    if (selectedManufacturers.includes(manufacturerName)) {
+      setSelectedManufacturers(selectedManufacturers.filter(m => m !== manufacturerName));
     } else {
-      setSelectedManufacturers([...selectedManufacturers, value]);
+      setSelectedManufacturers([...selectedManufacturers, manufacturerName]);
     }
   };
 
@@ -257,8 +256,15 @@ const Home = () => {
     });
   };
 
+  // current category ke manufacturers
   const currentManufacturers =
-    categories.find((cat) => cat.name === selectedCategory)?.manufacturers || [];
+    categories.find((cat) => cat._id === selectedCategory)?.manufacturers || [];
+
+  const getManufacturerDisplayText = () => {
+    if (selectedManufacturers.length === 0) return "All Manufacturers";
+    if (selectedManufacturers.length === 1) return selectedManufacturers[0];
+    return `${selectedManufacturers.length} Manufacturers Selected`;
+  };
 
   return (
     <div className="home-container">
@@ -277,49 +283,70 @@ const Home = () => {
           ))}
         </div>
       </section>
-<section className="filters">
 
-  {/* Category dropdown */}
-  <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-    <option value="">All Categories</option>
-    {categories.map((cat) => (
-      <option key={cat._id} value={cat._id}>
-        {cat.name}
-      </option>
-    ))}
-  </select>
+      <section className="filters">
+        {/* Category dropdown */}
+        <select value={selectedCategory} onChange={handleCategoryChange}>
+          <option value="">All Categories</option>
+          {categories.map((cat) => (
+            <option key={cat._id} value={cat._id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
 
-  {/* Manufacturers dropdown */}
-  <select
-    multiple
-    value={selectedManufacturers}
-    onChange={(e) => {
-      const values = Array.from(e.target.selectedOptions, opt => opt.value);
-      setSelectedManufacturers(values);
-    }}
-    disabled={!selectedCategory}
-  >
-    <option value="">All Manufacturers</option>
-    {categories.find((cat) => cat._id === selectedCategory)?.manufacturers.map((manu) => (
-      <option key={manu._id} value={manu.name}>
-        {manu.name}
-      </option>
-    ))}
-  </select>
+        {/* Custom Manufacturers dropdown */}
+        <div className="custom-dropdown">
+          <div 
+            className={`dropdown-header ${!selectedCategory ? 'disabled' : ''}`}
+            onClick={() => selectedCategory && setShowManufacturerDropdown(!showManufacturerDropdown)}
+          >
+            <span>{getManufacturerDisplayText()}</span>
+            <span className="dropdown-arrow">▼</span>
+          </div>
+          
+          {showManufacturerDropdown && selectedCategory && (
+            <div className="dropdown-list">
+              <div 
+                className="dropdown-item"
+                onClick={() => {
+                  setSelectedManufacturers([]);
+                  setShowManufacturerDropdown(false);
+                }}
+              >
+                All Manufacturers
+              </div>
+              {currentManufacturers.map((manu) => (
+                <div
+                  key={manu._id}
+                  className={`dropdown-item ${selectedManufacturers.includes(manu.name) ? 'selected' : ''}`}
+                  onClick={() => handleManufacturerToggle(manu.name)}
+                >
+                  <input 
+                    type="checkbox" 
+                    checked={selectedManufacturers.includes(manu.name)}
+                    onChange={() => {}} // controlled by onClick
+                  />
+                  {manu.name}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-  <select disabled>
-    <option>All Models</option>
-  </select>
+        {/* Models dropdown (future use) */}
+        <select disabled>
+          <option>All Models</option>
+        </select>
 
-  <button
-    disabled={!selectedCategory}
-    onClick={handleSearch}
-    className="search-btn"
-  >
-    Search
-  </button>
-</section>
-
+        <button
+          disabled={!selectedCategory}
+          onClick={handleSearch}
+          className="search-btn"
+        >
+          Search
+        </button>
+      </section>
     </div>
   );
 };
