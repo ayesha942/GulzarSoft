@@ -6,4 +6,15 @@ const categorySchema = new mongoose.Schema({
   link: { type: String, required: true }
 });
 
-module.exports = mongoose.model("Category", categorySchema);
+
+categorySchema.virtual("manufacturers", {
+  ref: "Manufacter",           
+  localField: "_id",           
+  foreignField: "category",   
+});
+
+categorySchema.set("toObject", { virtuals: true });
+categorySchema.set("toJSON", { virtuals: true });
+
+const Category = mongoose.models.Category || mongoose.model("Category", categorySchema);
+module.exports = Category;

@@ -187,7 +187,6 @@ const Home = () => {
         </option>
       ))}
   </select>
-
   <select disabled>
     <option>All Models</option>
   </select>
@@ -208,3 +207,164 @@ const Home = () => {
 };
 
 export default Home;
+
+
+
+// import React, { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import "./Home.css";
+
+// const Home = () => {
+//   const [categories, setCategories] = useState([]);
+//   const [selectedCategory, setSelectedCategory] = useState("");
+//   const [selectedCategoryData, setSelectedCategoryData] = useState(null);
+//   const [selectedManufacturers, setSelectedManufacturers] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const navigate = useNavigate();
+
+//   // Fetch categories and manufacturers from backend
+//   useEffect(() => {
+//     fetchCategories();
+//   }, []);
+
+//   const fetchCategories = async () => {
+//     try {
+//       setLoading(true);
+//       const response = await fetch("http://localhost:5000/categories");
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+//       const data = await response.json();
+//       setCategories(data);
+//       setError(null);
+//     } catch (error) {
+//       console.error("Error fetching categories:", error);
+//       setError("Failed to load categories. Please try again later.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const handleCategoryChange = (e) => {
+//     const categoryName = e.target.value;
+//     setSelectedCategory(categoryName);
+//     setSelectedManufacturers([]);
+    
+//     if (categoryName) {
+//       const categoryData = categories.find(cat => cat.name === categoryName);
+//       setSelectedCategoryData(categoryData);
+//     } else {
+//       setSelectedCategoryData(null);
+//     }
+//   };
+
+//   const handleManufacturerChange = (e) => {
+//     const value = e.target.value;
+//     if (value) {
+//       setSelectedManufacturers([value]);
+//     } else {
+//       setSelectedManufacturers([]);
+//     }
+//   };
+
+//   const handleSearch = () => {
+//     navigate("/search", {
+//       state: {
+//         category: selectedCategory,
+//         manufacturers: selectedManufacturers,
+//       },
+//     });
+//   };
+
+//   const handleCategoryCardClick = (category) => {
+//     if (category.link) {
+//       window.open(category.link, "_blank");
+//     }
+//   };
+
+//   if (loading) {
+//     return (
+//       <div className="home-container">
+//         <div className="loading">Loading categories...</div>
+//       </div>
+//     );
+//   }
+
+//   if (error) {
+//     return (
+//       <div className="home-container">
+//         <div className="error">
+//           <p>{error}</p>
+//           <button onClick={fetchCategories}>Try Again</button>
+//         </div>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="home-container">
+//       {/* Categories Grid Section */}
+//       <section className="categories">
+//         <h2>New & Used Construction Equipment</h2>
+//         <div className="grid">
+//           {categories.map((cat) => (
+//             <div
+//               key={cat._id}
+//               className="category-card"
+//               onClick={() => handleCategoryCardClick(cat)}
+//             >
+//               <img 
+//                 src={cat.img} 
+//                 alt={cat.name}
+//                 onError={(e) => {
+//                   e.target.src = "/placeholder-image.png"; // Fallback image
+//                 }}
+//               />
+//               <p>{cat.name}</p>
+//             </div>
+//           ))}
+//         </div>
+//       </section>
+
+//       {/* Filters Section */}
+//       <section className="filters">
+//         <select value={selectedCategory} onChange={handleCategoryChange}>
+//           <option value="">All Categories</option>
+//           {categories.map((cat) => (
+//             <option key={cat._id} value={cat.name}>
+//               {cat.name}
+//             </option>
+//           ))}
+//         </select>
+
+//         <select
+//           value={selectedManufacturers[0] || ""} 
+//           onChange={handleManufacturerChange}
+//           disabled={!selectedCategory || !selectedCategoryData?.manufacturers?.length}
+//         >
+//           <option value="">All Manufacturers</option>
+//           {selectedCategoryData?.manufacturers?.map((manufacturer) => (
+//             <option key={manufacturer._id} value={manufacturer.name}>
+//               {manufacturer.name}
+//             </option>
+//           ))}
+//         </select>
+
+//         <select disabled>
+//           <option>All Models</option>
+//         </select>
+
+//         <button
+//           disabled={!selectedCategory}
+//           onClick={handleSearch}
+//           className="search-btn"
+//         >
+//           Search
+//         </button>
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default Home;

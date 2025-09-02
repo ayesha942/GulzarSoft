@@ -5,20 +5,14 @@ const Manufacter = require("../models/Manufacter");
 
 router.get("/", async (req, res) => {
   try {
-    const categories = await Category.find();
-    const manufacturers = await Manufacter.find();
+    const categories = await Category.find().lean();
     
-    const result = categories.map(cat => ({
-      _id: cat._id,
-      name: cat.name,
-      img: cat.img,
-      link: cat.link,
-      manufacturers: manufacturers.filter(m => m.category.toString() === cat._id.toString())
-    }));
+    for (let cat of categories) {
+      cat.manufacturers = await Manufacter.find({ category: cat._id }).lean();
+    }
     
-    res.json(result);
+    res.json(categories);
   } catch (error) {
-    console.error("Error:", error);
     res.status(500).json({ error: error.message });
   }
 });

@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const manufacterSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+  category: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Category", 
+    required: true 
+  },
 });
 
-module.exports = mongoose.model("Manufacter", manufacterSchema); 
+module.exports = mongoose.model("Manufacter", manufacterSchema, "manufacters");
