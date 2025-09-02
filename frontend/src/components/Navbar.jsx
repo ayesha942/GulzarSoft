@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSearch, FaBars, FaTimes, FaGlobe } from "react-icons/fa";
 import "./Navbar.css";
@@ -6,30 +6,144 @@ import "./Navbar.css";
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const navigate = useNavigate();
+  const searchInputRef = useRef(null);
+  const suggestionsRef = useRef(null);
+
+  // Sample data abhi ma use kr re 
+  const sampleSuggestions = [
+    "Excavators",
+    "Bulldozers", 
+    "Cranes",
+    "Loaders",
+    "Backhoes",
+    "Dump Trucks",
+    "Graders",
+    "Compactors",
+    "Forklifts",
+    "Skid Steers",
+    "Caterpillar 320",
+    "John Deere 310",
+    "Komatsu PC200",
+    "Volvo EC210",
+    "Case CX210",
+    "Hitachi ZX200",
+    "JCB 3CX",
+    "Liebherr R936",
+    "Doosan DX225",
+    "Hyundai HX220"
+  ];
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleSearch = (e) => {
+  
+  useEffect(() => {
+    if (searchTerm.trim().length > 0) {
+      const filtered = sampleSuggestions.filter(suggestion =>
+        suggestion.toLowerCase().includes(searchTerm.toLowerCase())
+      ).slice(0, 8); 
+      
+      setSuggestions(filtered);
+      setShowSuggestions(true);
+      setSelectedSuggestionIndex(-1);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [searchTerm]);
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target) &&
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = (e, searchQuery = null) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
+    
+    const queryToSearch = searchQuery || searchTerm.trim();
+    
+    if (queryToSearch) {
       navigate("/search", {
         state: {
           category: "",
           categoryName: "All Categories",
           manufacturers: [],
-          keywords: searchTerm.trim(),
+          keywords: queryToSearch,
+        },
+      });
+    } else {
+      navigate("/search", {
+        state: {
+          category: "",
+          categoryName: "All Categories",
+          manufacturers: [],
+          keywords: "", 
         },
       });
     }
+    
+    setShowSuggestions(false);
   };
 
-  // Handle search on Enter key press
+  const handleSuggestionClick = (suggestion) => {
+    setSearchTerm(suggestion);
+    setShowSuggestions(false);
+    handleSearch({ preventDefault: () => {} }, suggestion);
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleSearch(e);
+      if (selectedSuggestionIndex >= 0 && suggestions[selectedSuggestionIndex]) {
+        handleSuggestionClick(suggestions[selectedSuggestionIndex]);
+      } else {
+        handleSearch(e);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (showSuggestions && suggestions.length > 0) {
+        setSelectedSuggestionIndex(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : 0
+        );
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (showSuggestions && suggestions.length > 0) {
+        setSelectedSuggestionIndex(prev => 
+          prev > 0 ? prev - 1 : suggestions.length - 1
+        );
+      }
+    } else if (e.key === 'Escape') {
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleInputFocus = () => {
+    if (searchTerm.trim().length > 0 && suggestions.length > 0) {
+      setShowSuggestions(true);
     }
   };
 
@@ -77,18 +191,41 @@ function Header() {
             </h1>
           </div>
                    
-          <form className="search-box" onSubmit={handleSearch}>
-            <input
-              type="text"
-              placeholder="Search (ex: Keywords or Quick Find Code)"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={handleKeyPress}
-            />
-            <button type="submit">
-              <FaSearch />
-            </button>
-          </form>
+          <div className="search-container">
+            <form className="search-box" onSubmit={handleSearch}>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Search (ex: Keywords or Quick Find Code)"
+                value={searchTerm}
+                onChange={handleInputChange}
+                onKeyDown={handleKeyPress}
+                onFocus={handleInputFocus}
+                autoComplete="off"
+              />
+              <button type="submit">
+                <FaSearch />
+              </button>
+            </form>
+            
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="suggestions-dropdown" ref={suggestionsRef}>
+                {suggestions.map((suggestion, index) => (
+                  <div
+                    key={index}
+                    className={`suggestion-item ${
+                      index === selectedSuggestionIndex ? 'highlighted' : ''
+                    }`}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    onMouseEnter={() => setSelectedSuggestionIndex(index)}
+                  >
+                    <FaSearch className="suggestion-icon" />
+                    <span>{suggestion}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </header>
     </>

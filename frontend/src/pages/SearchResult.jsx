@@ -20,9 +20,15 @@ const SearchResults = () => {
           </div>
         )}
         
-        {!keywords && (
-          <h2>Selected Category: {categoryName || "All Categories"}</h2>
-        )}
+      {keywords !== undefined && (
+  <div className="keyword-search">
+  <h2>
+    Search Results for: "{keywords || "All Categories"}"
+  </h2>
+</div>
+
+)}
+
         
         {manufacturers && manufacturers.length > 0 && (
           <>
@@ -37,11 +43,10 @@ const SearchResults = () => {
         
         <div className="search-results-placeholder">
           <p>Search results will be displayed here...</p>
-          <p>
-            {keywords 
-              ? `Showing results for "${keywords}"` 
-              : `Showing results for ${categoryName || "All Categories"}`}
-          </p>
+         <p>
+  Showing results for "{keywords || categoryName || "All Categories"}"
+</p>
+
         </div>
       </div>
 
