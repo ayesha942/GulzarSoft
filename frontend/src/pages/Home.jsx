@@ -174,15 +174,9 @@ const Home = () => {
     ))}
   </select>
 
-  
   <select
-    multiple
-    value={selectedManufacturers}
-    onChange={(e) =>
-      setSelectedManufacturers(
-        Array.from(e.target.selectedOptions, (option) => option.value)
-      )
-    }
+    value={selectedManufacturers[0] || ""} 
+    onChange={(e) => setSelectedManufacturers([e.target.value])}
     disabled={!selectedCategory}
   >
     <option value="">All Manufacturers</option>
@@ -194,11 +188,11 @@ const Home = () => {
       ))}
   </select>
 
-
   <select disabled>
     <option>All Models</option>
   </select>
 
+  
   <button
     disabled={!selectedCategory}
     onClick={handleSearch}
@@ -207,6 +201,7 @@ const Home = () => {
     Search
   </button>
 </section>
+
 
     </div>
   );
