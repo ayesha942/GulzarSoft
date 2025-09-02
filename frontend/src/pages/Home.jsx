@@ -165,10 +165,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Filters */}
-     {/* Filters */}
+     
 <section className="filters">
-  {/* Category Dropdown */}
+
   <select value={selectedCategory} onChange={handleCategoryChange}>
     <option value="">All Categories</option>
     {categories.map((cat) => (
@@ -178,7 +177,7 @@ const Home = () => {
     ))}
   </select>
 
-  {/* Manufacturers Dropdown */}
+  
   <select
     multiple
     value={selectedManufacturers}
@@ -198,12 +197,11 @@ const Home = () => {
       ))}
   </select>
 
-  {/* Models Dropdown (Dummy for now) */}
+
   <select disabled>
     <option>All Models</option>
   </select>
 
-  {/* Search Button */}
   <button
     disabled={!selectedCategory}
     onClick={handleSearch}

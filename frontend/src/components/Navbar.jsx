@@ -11,7 +11,6 @@ function Header() {
 
   return (
     <>
-      {/* Top Navigation Bar */}
       <div className="top-nav">
         <div className="top-nav-left">
           <span>Login / Dealer Portal / VIP Portal</span>
@@ -32,7 +31,6 @@ function Header() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <div className={`mobile-menu ${isMenuOpen ? 'active' : ''}`}>
         <div className="mobile-menu-item">Login / Dealer Portal / VIP Portal</div>
         <div className="mobile-menu-item">Register</div>
