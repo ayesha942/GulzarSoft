@@ -146,9 +146,6 @@ const Home = () => {
   return (
     <div className="home-container">
     
-     
-
-      {/* Category Grid */}
       <section className="categories">
         <h2>New & Used Construction Equipment</h2>
         <div className="grid">

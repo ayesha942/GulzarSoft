@@ -1,4 +1,4 @@
-// frontend/src/pages/SearchResults.jsx
+
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 //import "./SearchResults.css";

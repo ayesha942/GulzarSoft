@@ -40,7 +40,7 @@ function Header() {
         <div className="mobile-menu-item">Global Brands</div>
       </div>
 
-      {/* Main Header */}
+   
       <header className="header">
         <div className="header-content">
           <div className="logo-section">
