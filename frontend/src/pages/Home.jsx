@@ -208,6 +208,7 @@
 
 // export default Home;
 
+//dont get confused b/w these two codes wo upar wala pehle kia th as it was hsowing hardcoded values jabk ye ni a
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
@@ -234,8 +235,8 @@ const Home = () => {
   }, []);
 
   const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value); // ye _id hoga
-    setSelectedManufacturers([]); // reset manufacturers
+    setSelectedCategory(e.target.value); 
+    setSelectedManufacturers([]); 
     setShowManufacturerDropdown(false);
   };
 
@@ -256,7 +257,7 @@ const Home = () => {
     });
   };
 
-  // current category ke manufacturers
+
   const currentManufacturers =
     categories.find((cat) => cat._id === selectedCategory)?.manufacturers || [];
 
@@ -285,7 +286,6 @@ const Home = () => {
       </section>
 
       <section className="filters">
-        {/* Category dropdown */}
         <select value={selectedCategory} onChange={handleCategoryChange}>
           <option value="">All Categories</option>
           {categories.map((cat) => (
@@ -294,8 +294,6 @@ const Home = () => {
             </option>
           ))}
         </select>
-
-        {/* Custom Manufacturers dropdown */}
         <div className="custom-dropdown">
           <div 
             className={`dropdown-header ${!selectedCategory ? 'disabled' : ''}`}
@@ -334,7 +332,7 @@ const Home = () => {
           )}
         </div>
 
-        {/* Models dropdown (future use) */}
+    
         <select disabled>
           <option>All Models</option>
         </select>
