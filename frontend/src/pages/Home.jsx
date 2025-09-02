@@ -277,42 +277,49 @@ const Home = () => {
           ))}
         </div>
       </section>
+<section className="filters">
 
-      <section className="filters">
+  {/* Category dropdown */}
+  <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+    <option value="">All Categories</option>
+    {categories.map((cat) => (
+      <option key={cat._id} value={cat._id}>
+        {cat.name}
+      </option>
+    ))}
+  </select>
 
-        <select value={selectedCategory} onChange={handleCategoryChange}>
-          <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat._id} value={cat.name}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-        <select
-          value={selectedManufacturers[0] || ""}
-          onChange={(e) => setSelectedManufacturers([e.target.value])}
-          disabled={!selectedCategory}
-        >
-          <option value="">All Manufacturers</option>
-          {currentManufacturers.map((manu) => (
-            <option key={manu._id} value={manu.name}>
-              {manu.name}
-            </option>
-          ))}
-        </select>
+  {/* Manufacturers dropdown */}
+  <select
+    multiple
+    value={selectedManufacturers}
+    onChange={(e) => {
+      const values = Array.from(e.target.selectedOptions, opt => opt.value);
+      setSelectedManufacturers(values);
+    }}
+    disabled={!selectedCategory}
+  >
+    <option value="">All Manufacturers</option>
+    {categories.find((cat) => cat._id === selectedCategory)?.manufacturers.map((manu) => (
+      <option key={manu._id} value={manu.name}>
+        {manu.name}
+      </option>
+    ))}
+  </select>
 
-        <select disabled>
-          <option>All Models</option>
-        </select>
+  <select disabled>
+    <option>All Models</option>
+  </select>
 
-        <button
-          disabled={!selectedCategory}
-          onClick={handleSearch}
-          className="search-btn"
-        >
-          Search
-        </button>
-      </section>
+  <button
+    disabled={!selectedCategory}
+    onClick={handleSearch}
+    className="search-btn"
+  >
+    Search
+  </button>
+</section>
+
     </div>
   );
 };

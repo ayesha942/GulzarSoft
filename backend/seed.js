@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Category = require("./models/Category");
-
+const Manufacter = require("./models/Manufacter");
 const MONGO_URI = "mongodb+srv://munirayesha009:Ayesha18@cluster0.qtpfqr7.mongodb.net/vehicleDB";
 
 
@@ -85,28 +85,27 @@ const categories = [
       img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_1038.png?v=16",
       link: "/listings/for-sale/telehandlers-lifts/1038",
     },
-    {
-      name: "Off-Highway Trucks",
-      img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_1049.png?v=16",
-      link: "/listings/for-sale/off-highway-trucks/1049",
-    },
-    {
-      name: "Asphalt / Pavers / Concrete Equipment",
-      img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_1007.png?v=16",    },
-    {
-      name: "Construction Attachments",
-      img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_81.png?v=16",
-    },
-    {
-      name: "Dismantled Machines",
-      img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_400002.png?v=16",
-    },
-    {
-      name: "Parts",
-      img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_400003.png?v=16",
-    },
+   // {
+    //   name: "Off-Highway Trucks",
+    //   img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_1049.png?v=16",
+    //   link: "/listings/for-sale/off-highway-trucks/1049",
+    // },
+    // {
+    //   name: "Asphalt / Pavers / Concrete Equipment",
+    //   img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_1007.png?v=16",    },
+    // {
+    //   name: "Construction Attachments",
+    //   img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_81.png?v=16",
+    // },
+    // {
+    //   name: "Dismantled Machines",
+    //   img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_400002.png?v=16",
+    // },
+    // {
+    //   name: "Parts",
+    //   img: "https://media.sandhills.com/CDN/Images/Icons/Categories/PNG/Machinery/Icon_400003.png?v=16",
+    // },
   ];
-
 const manufacturersData = {
   "Skid Steers": ["Bobcat", "Caterpillar"],
   "Mini Excavators": ["Komatsu", "Hitachi"],
@@ -120,15 +119,30 @@ async function seedCategories() {
   try {
     await mongoose.connect(MONGO_URI);
 
-    await Category.deleteMany(); // purani categories delete
-    console.log("Old categories deleted");
+  
+    await Category.deleteMany();
+    await Manufacter.deleteMany();
+    console.log("Old categories & manufacturers deleted");
 
-    await Category.insertMany(categories); // nayi insert
-    console.log("Categories seeded successfully");
+
+    const insertedCategories = await Category.insertMany(categories);
+    console.log("✅ Categories seeded");
+
+    for (const cat of insertedCategories) {
+      const manuNames = manufacturersData[cat.name] || [];
+      for (const name of manuNames) {
+        await Manufacter.create({
+          name,
+          category: cat._id, 
+        });
+      }
+    }
+
+    console.log("✅ Manufacturers seeded and linked to categories");
 
     mongoose.connection.close();
   } catch (error) {
-    console.error("Error seeding categories:", error);
+    console.error("❌ Error seeding data:", error);
     mongoose.connection.close();
   }
 }
